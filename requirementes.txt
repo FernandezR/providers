@@ -1,0 +1,8 @@
+lxml
+cssselect
+pycryptodome
+cloudscraper
+urllib3
+packaging
+pyexecjs
+tinycss2
