@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
-from src.meta import version, author
 
+from src.meta import version, author
 
 release_status = '5 - Production/Stable'
 if ~version.find('beta'):
@@ -32,5 +32,16 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Markup :: HTML'
+    ],
+    install_requires=[
+        'lxml',
+        'cssselect',
+        'pycryptodome',
+        'cloudscraper',
+        'requests',
+        'packaging',
+        'js2py',
+        'tinycss2',
+        'peewee',
     ]
 )

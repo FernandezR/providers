@@ -10,6 +10,8 @@ __all__ = [
     'ImageSrcAttrEmptyException',
     'ProviderError',
     'WrongResponseException',
+    'BackgroundImageExtractException',
+    'CantWriteFileException',
 ]
 
 
@@ -62,14 +64,24 @@ class ImageSrcAttrEmptyException(WarningException):
         self.image = image
 
 
-# Provider internal errors
-class ProviderError(ErrorException):
-    pass
-
-
 class WrongResponseException(WarningException):
     def __init__(self, response: HTTPResponse):
         self.response = response
+
+
+class BackgroundImageExtractException(WarningException):
+    def __init__(self, style: str):
+        self.style = style
+
+
+class CantWriteFileException(WarningException):
+    def __init__(self, path: str):
+        self.path = path
+
+
+# Provider internal errors
+class ProviderError(ErrorException):
+    pass
 
 
 # Info exceptions

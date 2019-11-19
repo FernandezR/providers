@@ -2,7 +2,8 @@ lxml
 cssselect
 pycryptodome
 cloudscraper
-urllib3
+requests
 packaging
-pyexecjs
+js2py
 tinycss2
+peewee

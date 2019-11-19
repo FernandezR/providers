@@ -1,24 +1,28 @@
 from logging import Logger
 from typing import ClassVar
 
-from .requests import Requests
+from .request import Request
 from ..exceptions import InfoException
 from ..types import *
 from .html_parser import HtmlParser
 
 
-class ProviderProperties(object):
+__all__ = ['ProviderProperties']
+
+
+class ProviderProperties:
     _cache: ClassVar[dict]  # type: dict
     _meta: ClassVar[Meta]  # type: Meta
     _log: ClassVar[Logger]  # type: Logger
-    _requests: ClassVar[Requests]  # type: Requests
+    _requests: ClassVar[Request]  # type: Request
     _html: ClassVar[HtmlParser]  # type: HtmlParser
 
-    def __init__(self, url: str, **kwargs):
+    def __init__(self, url: str, connection: Request, **kwargs):
         if 'log' not in kwargs:
             kwargs['log'] = Logger(self.__class__.__name__)
         self._cache = {'url': url}  # type: dict
         self._log = kwargs['log']  # type: Logger
+        self._requests = connection  # type: Request
 
     @property
     def title(self) -> str:
@@ -56,7 +60,7 @@ class ProviderProperties(object):
     @meta.setter
     def meta(self, meta: Meta):
         if self._meta is not None:
-            raise InfoException('Re-init meta')
+            self.info('Re-init meta')
         self._meta = meta
 
     @property
@@ -64,7 +68,7 @@ class ProviderProperties(object):
         return self._cache.get('run_params', {})
 
     @property
-    def request(self) -> Requests:
+    def request(self) -> Request:
         return self._requests
 
     @property

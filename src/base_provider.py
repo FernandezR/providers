@@ -2,27 +2,24 @@ import re
 from abc import ABCMeta, abstractmethod
 from typing import List, Union, Optional, Iterator
 
-from urllib3 import HTTPConnectionPool
-from urllib.parse import urlparse
-
+from .exceptions import *
 from .types import *
 from .utils.properties import ProviderProperties
-from .utils.requests import Requests
-from .exceptions import InfoException
+from .utils.request import Request
 
 
 class BaseProvider(ProviderProperties, metaclass=ABCMeta):
     DISABLED = False
     AUTO_INIT = True
 
-    def __init__(self, url: str, connection: HTTPConnectionPool = None, **kwargs):
+    def __init__(self, url: str, connection: Request = None, **kwargs):
         url = self._url(url)
         if connection is None:
-            connection = HTTPConnectionPool(urlparse(url).hostname.replace('\\', ''))
+            connection = Request({})
         super().__init__(url=url, connection=connection)
         kwargs.pop('connection')
         self._cache['run_params'] = kwargs
-        self._requests = Requests(connection=kwargs['connection'])  # type: Requests
+        self._requests = connection  # type: Request
 
         if self.AUTO_INIT:
             self.prepare()
@@ -83,6 +80,7 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
 
     # region special methods
     def _url(self, url: str) -> str:
+        self.html.items(self.request.get('a'))
         """ Modify url if need (before init provider) """
         return url
 
