@@ -1,5 +1,6 @@
-from .types import *
 from requests import Response
+
+from .types import *
 
 __all__ = [
     'InfoException',
@@ -7,12 +8,12 @@ __all__ = [
     'ChaptersNotFoundException',
     'ImagesNotFoundException',
     'CoverNotFoundException',
-    'ImageSrcAttrEmptyException',
     'ProviderError',
     'WrongResponseException',
     'BackgroundImageExtractException',
     'CantWriteFileException',
     'WarningException',
+    'ProviderNotFoundError',
 ]
 
 
@@ -44,8 +45,7 @@ class SiteDownException(FatalException):
 
 # Not found exceptions
 class ChaptersNotFoundException(InfoException):
-    def __init__(self, chapter: Chapter):
-        self.chapter = chapter
+    pass
 
 
 class ImagesNotFoundException(InfoException):
@@ -59,12 +59,6 @@ class CoverNotFoundException(InfoException):
 
 
 # other warning exceptions
-class ImageSrcAttrEmptyException(WarningException):
-    def __init__(self, chapter: Chapter, image: Image):
-        self.chapter = chapter
-        self.image = image
-
-
 class WrongResponseException(WarningException):
     def __init__(self, response: Response):
         self.response = response
@@ -82,6 +76,10 @@ class CantWriteFileException(WarningException):
 
 # Provider internal errors
 class ProviderError(ErrorException):
+    pass
+
+
+class ProviderNotFoundError(ErrorException):
     pass
 
 

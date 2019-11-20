@@ -1,16 +1,17 @@
-from typing import ClassVar, Union, Tuple, Dict, Optional
-from pathlib import Path
 from collections import OrderedDict
-
+from pathlib import Path
+from typing import Union, Tuple, Optional
 from urllib.parse import urlparse
-from requests import Session, Response
-from requests.cookies import cookiejar_from_dict, RequestsCookieJar
-from requests.adapters import HTTPAdapter
-from ..exceptions import *
+
 from cloudscraper import CloudScraper
+from requests import Session, Response
+from requests.adapters import HTTPAdapter
+from requests.cookies import cookiejar_from_dict, RequestsCookieJar
 
+from ..exceptions import *
+from ..types import *
 
-__all__ = ['Request']
+__all__ = ['Request', 'url2name']
 
 
 class Request:
@@ -86,11 +87,18 @@ class Request:
     def download(self, url: str, path: Path, name: Union[str, Path]):
         """ path """
         response = self.get(url)
-        _path = str(path.resolve().joinpath(name or self.url2name(response.url)))
-        with open(_path, 'wb') as w:
+        _path = path.resolve().joinpath(name or self.url2name(response.url))
+        with open(str(_path), 'wb') as w:
             if not w.writable():
-                raise CantWriteFileException(_path)
+                raise CantWriteFileException(str(_path))
             w.write(response.content)
+        return _path
+
+    def download_image(self, image: Image, path: Path) -> LocalImage:
+        _path = self.download(url=image.url, path=path, name=image.__str__())
+        return LocalImage(
+            image=image,
+        )
 
     def cf_scrape(self, url: str, **kwargs):
         if 'User-Agent' in self.headers:
@@ -99,3 +107,6 @@ class Request:
         self.cookies_update(tokens[0])
         # self.headers.update({'User-Agent': tokens[1]})
         return tokens[1]
+
+
+url2name = Request.url2name

@@ -106,5 +106,22 @@ class ProviderProperties:
             self.warning(message, *args, **kwargs)
         else:
             raise WarningException(message, *args, **kwargs)
+
+    @property
+    def chapters_count(self) -> int:
+        return self._cache.get('_chapters_count', -1)
+
+    @chapters_count.setter
+    def chapters_count(self, count: int):
+        self._cache['_chapters_count'] = count
+
+    @property
+    def images_count(self) -> int:
+        return self._cache.get('_images_count', -1)
+
+    @images_count.setter
+    def images_count(self, count: int):
+        self._cache['_images_count'] = count
+
     # endregion helpers
 

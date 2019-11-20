@@ -1,33 +1,48 @@
+import re
+from enum import Enum
 from pathlib import Path
 from typing import NamedTuple, List, Optional, Union
-from urllib.parse import urlparse
 
-__all__ = ['Image', 'Archive', 'Chapter', 'Meta', 'LocalImage']
+from .utils.request import url2name
+
+__all__ = ['Image', 'Archive', 'Chapter', 'Meta', 'LocalImage', 'ImageTypes']
+
+
+class ImageTypes(Enum):
+    NORMAL: int = 0
+    ENCRYPTED: int = 1
+    WEBP: int = 2
 
 
 class Image(NamedTuple):
     idx: int  # sequent image index
     url: str  # image url
-    extension: Optional[str]  # preferred extension
     alternative_urls: Optional[List[str]]  # alternative urls
     name_format: str = '{idx:>03}-{name}.{extension}'
-    type: Optional[str] = None  # image type
+    extension: Optional[str] = None  # preferred extension
+    type: int = 0  # image type @see ImageTypes.NORMAL
 
     def __str__(self) -> str:
-        name = urlparse(self.url).path
+        name = url2name(self.url)
+        _re = re.search(r'.+\.(\w{2,4})$', name)
+        ext = _re.group(1) if _re else None
         return self.name_format.format(
             idx=self.idx,
             url=self.url,
-            extension=self.extension or 'png',
+            extension=self.extension or (ext or 'png'),
             name=name,
         )
 
 
-class LocalImage(NamedTuple):
+class LocalImage(NamedTuple):  # m.b. delete this
     image: Image
 
+    @property
+    def name(self) -> str:
+        return self.image.__str__()
+
     def path(self, base_path: Path) -> Path:
-        return base_path.resolve().joinpath(self.image.__str__())
+        return base_path.resolve().joinpath(self.name)
 
 
 class Archive(NamedTuple):  # for some sites
@@ -51,8 +66,8 @@ class Chapter(NamedTuple):
     """
     Example: Chapter(vol='4', ch='104', name='Tamatan, The Spirit', url='https://bato.to/chapter/1381023')
     """
-    vol: str  # sequent chapter index
-    ch: str  # sequent chapter index
+    vol: str  # volume number
+    ch: str  # chapter number
     url: str  # chapter url
     name: str  # chapter human-friendly name
     date: Optional[str] = None  # chapter publication date

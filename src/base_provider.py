@@ -1,6 +1,6 @@
 import re
 from abc import ABCMeta, abstractmethod
-from typing import List, Union, Optional, Iterator
+from typing import List, Union, Optional, Iterable
 
 from .exceptions import *
 from .types import *
@@ -25,6 +25,10 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
             self.prepare()
             self.meta = self.get_meta()
 
+    @classmethod
+    def new(cls, url: str, *args, **kwargs):
+        return cls(url, *args, **kwargs)
+
     @staticmethod
     @abstractmethod
     def supported_urls() -> List[str]:
@@ -45,33 +49,29 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         return False
 
     # region abstract
-    @staticmethod
-    def allow_send_files_referrer() -> bool:
+    def allow_send_files_referrer(self) -> bool:
         """ allow send referrer header """
         return True
 
     @abstractmethod
     def prepare(self):
         self.init_content()
-        raise InfoException('Default prepare method')
+        self.info_or_raise('Default prepare method')
 
     @abstractmethod
-    def get_chapters(self) -> Iterator[Chapter]:
+    def get_chapters(self) -> Iterable[Chapter]:
         raise NotImplementedError()
 
-    @abstractmethod
     def get_chapters_count(self) -> int:
         """ If -1, then continue always """
-        return -1
+        return self.chapters_count
 
     @abstractmethod
-    def get_chapter_files(self, chapter: Chapter) -> Iterator[Union[Image, Archive]]:
+    def get_chapter_files(self, chapter: Chapter) -> Iterable[Union[Image, Archive]]:
         raise NotImplementedError()
 
-    @abstractmethod
     def get_chapter_files_count(self, chapter: Chapter) -> int:
-        """ If -1, then continue always """
-        return -1
+        return self.images_count
 
     @abstractmethod
     def get_meta(self) -> Meta:
@@ -80,7 +80,7 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
 
     # region special methods
     def _url(self, url: str) -> str:
-        self.html.items(self.request.get('a').text)
+        self.html.parse(self.request.get('a').text)
         """ Modify url if need (before init provider) """
         return url
 

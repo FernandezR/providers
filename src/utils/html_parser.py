@@ -12,24 +12,20 @@ class HtmlParser:
     DEFAULT_TRANSLATOR: str = 'html'
 
     @classmethod
-    def select(
-            cls, content: HtmlElement, selector,
-            idx: int = None
-            ) -> Union[HtmlElement, List[HtmlElement]]:
-        items = content.cssselect(selector)  # type: List[HtmlElement]
-        if idx is not None:
-            return items[idx]
-        return items
+    def select(cls, content: HtmlElement, selector: str) -> List[HtmlElement]:
+        return content.cssselect(selector)
 
     @classmethod
-    def items(
-            cls, content: str, selector: str = None,
-            idx: int = None
-            ) -> Union[HtmlElement, List[HtmlElement]]:
+    def select_one(cls, content: HtmlElement, selector: str, idx: int) -> HtmlElement:
+        items = cls.select(content, selector)
+        return items[idx]
+
+    @classmethod
+    def parse(cls, content: str, selector: str = None) -> Union[HtmlElement, List[HtmlElement]]:
         dom = document_fromstring(content)  # type: HtmlElement
         if selector is None:
             return dom
-        return cls.select(dom, selector, idx)
+        return cls.select(dom, selector)
 
     @classmethod
     def background_image(cls, element: HtmlElement) -> str:
@@ -56,3 +52,9 @@ class HtmlParser:
         if len(text) < 1:
             raise InfoException('Text has empty')
         return text
+
+    def cover(self, element: HtmlElement, selector: str, attr: str = 'src', idx: int = 0) -> str:
+        value = element.cssselect(selector)[idx].get(attr)
+        if not value:
+            raise RuntimeWarning(self)
+        return value
