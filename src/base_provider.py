@@ -80,7 +80,7 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
 
     # region special methods
     def _url(self, url: str) -> str:
-        self.html.items(self.request.get('a'))
+        self.html.items(self.request.get('a').text)
         """ Modify url if need (before init provider) """
         return url
 

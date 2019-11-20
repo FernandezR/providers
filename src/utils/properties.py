@@ -1,21 +1,21 @@
 from logging import Logger
-from typing import ClassVar
+from typing import Union
 
-from .request import Request
-from ..exceptions import InfoException
-from ..types import *
 from .html_parser import HtmlParser
-
+from .request import Request
+from ..exceptions import InfoException, WarningException
+from ..types import *
 
 __all__ = ['ProviderProperties']
 
 
 class ProviderProperties:
-    _cache: ClassVar[dict]  # type: dict
-    _meta: ClassVar[Meta]  # type: Meta
-    _log: ClassVar[Logger]  # type: Logger
-    _requests: ClassVar[Request]  # type: Request
-    _html: ClassVar[HtmlParser]  # type: HtmlParser
+    _cache: dict
+    _meta: Meta
+    _log: Logger
+    _requests: Request
+    _html: HtmlParser
+    _quiet_mode: bool = False
 
     def __init__(self, url: str, connection: Request, **kwargs):
         if 'log' not in kwargs:
@@ -23,6 +23,7 @@ class ProviderProperties:
         self._cache = {'url': url}  # type: dict
         self._log = kwargs['log']  # type: Logger
         self._requests = connection  # type: Request
+        self._quiet_mode = kwargs.get('quiet', False)
 
     @property
     def title(self) -> str:
@@ -33,7 +34,7 @@ class ProviderProperties:
         return self._meta.title_original
 
     @property
-    def cover(self) -> str:
+    def cover(self) -> Union[str, bytes]:
         return self._meta.cover
 
     @property
@@ -45,9 +46,9 @@ class ProviderProperties:
 
     @property
     def content(self):
-        if 'content' in self._cache:
-            return self._cache.get('content')
-        raise InfoException('Content not set yet')
+        if 'content' not in self._cache:
+            raise WarningException('Content not set yet')
+        return self._cache.get('content')
 
     @content.setter
     def content(self, content):
@@ -60,7 +61,7 @@ class ProviderProperties:
     @meta.setter
     def meta(self, meta: Meta):
         if self._meta is not None:
-            self.info('Re-init meta')
+            self.info_or_raise('Re-init meta')
         self._meta = meta
 
     @property
@@ -77,15 +78,33 @@ class ProviderProperties:
             self._html = HtmlParser()
         return self._html
 
+    @property
+    def quiet(self) -> bool:
+        return self._quiet_mode
+
     # region helpers
     def init_content(self):
-        self._cache['content'] = self._requests.get(self.url).read()
+        self._cache['content'] = self._requests.get(self.url).text
 
     def info(self, message, *args, **kwargs):
         self._log.info(message, *args, **kwargs)
 
     def warning(self, message, *args, **kwargs):
         self._log.warning(message, *args, **kwargs)
-        pass
+
+    def error(self, message, *args, **kwargs):
+        self._log.error(message, *args, **kwargs)
+
+    def info_or_raise(self, message, *args, **kwargs):
+        if self.quiet:
+            self.info_or_raise(message, *args, **kwargs)
+        else:
+            raise InfoException(message, *args, **kwargs)
+
+    def warning_or_raise(self, message, *args, **kwargs):
+        if self.quiet:
+            self.warning(message, *args, **kwargs)
+        else:
+            raise WarningException(message, *args, **kwargs)
     # endregion helpers
 

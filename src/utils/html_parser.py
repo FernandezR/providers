@@ -1,21 +1,35 @@
-from typing import Union, List
+from typing import Union, List, Dict, Any
 
 from lxml.html import document_fromstring, HtmlElement
-from requests import Response
 from tinycss2 import parser, tokenizer
 
-from ..exceptions import BackgroundImageExtractException
+from ..exceptions import BackgroundImageExtractException, InfoException
 
 
 class HtmlParser:
+    __slots__ = ()
+    __dict__: Dict[str, Any] = dict()
+    DEFAULT_TRANSLATOR: str = 'html'
+
     @classmethod
-    def items(cls, content: str, selector: str = None, idx: int = None) -> Union[HtmlElement, List[HtmlElement]]:
-        dom = document_fromstring(content)  # type: HtmlElement
-        if selector is not None:
-            dom = dom.cssselect(selector)  # type: List[HtmlElement]
+    def select(
+            cls, content: HtmlElement, selector,
+            idx: int = None
+            ) -> Union[HtmlElement, List[HtmlElement]]:
+        items = content.cssselect(selector)  # type: List[HtmlElement]
         if idx is not None:
-            dom = dom[idx]
-        return dom
+            return items[idx]
+        return items
+
+    @classmethod
+    def items(
+            cls, content: str, selector: str = None,
+            idx: int = None
+            ) -> Union[HtmlElement, List[HtmlElement]]:
+        dom = document_fromstring(content)  # type: HtmlElement
+        if selector is None:
+            return dom
+        return cls.select(dom, selector, idx)
 
     @classmethod
     def background_image(cls, element: HtmlElement) -> str:
@@ -30,8 +44,15 @@ class HtmlParser:
         return [(i.get(attribute).strip() if strip else i.get(attribute)) for i in items]
 
     @classmethod
-    def elements(cls, data: Union[str, Response], selector: str):
-        if isinstance(data, Response):
-            data.raise_for_status()
-            data = data.text
-        return cls.items(data, selector)
+    def text(cls, element: HtmlElement, strip: bool = True):
+        text = element.text.strip() if strip else element.text
+        if len(text) < 1:
+            raise InfoException('Text has empty')
+        return text
+
+    @classmethod
+    def text_full(cls, element: HtmlElement, strip: bool = True):
+        text = element.text_content().strip() if strip else element.text_content()
+        if len(text) < 1:
+            raise InfoException('Text has empty')
+        return text

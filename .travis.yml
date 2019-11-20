@@ -1,0 +1,19 @@
+language: python
+dist: xenial
+#addons:
+#  artifacts: true
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+cache: pip
+before_install:
+  - sudo apt-get -y install python-setuptools libwebp-dev
+  - python -V
+  - pwd
+install:
+  - pip install -U coverage setuptools pyinstaller mypy
+  - pip install -r requirements.txt
+script:
+  - mypy src  # check syntax
+  - coverage run --source=src run_tests.py

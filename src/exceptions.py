@@ -1,5 +1,5 @@
 from .types import *
-from urllib3 import HTTPResponse
+from requests import Response
 
 __all__ = [
     'InfoException',
@@ -12,6 +12,7 @@ __all__ = [
     'WrongResponseException',
     'BackgroundImageExtractException',
     'CantWriteFileException',
+    'WarningException',
 ]
 
 
@@ -42,22 +43,22 @@ class SiteDownException(FatalException):
 
 
 # Not found exceptions
-class ChaptersNotFoundException(WarningException):
+class ChaptersNotFoundException(InfoException):
     def __init__(self, chapter: Chapter):
         self.chapter = chapter
 
 
-class ImagesNotFoundException(WarningException):
-    def __init__(self, chapter: Chapter, image: Image):
+class ImagesNotFoundException(InfoException):
+    def __init__(self, chapter: Chapter):
         self.chapter = chapter
-        self.image = image
 
 
-class CoverNotFoundException(WarningException):
+class CoverNotFoundException(InfoException):
     def __init__(self, cover_url: str = None):
         self.cover_url = cover_url
 
 
+# other warning exceptions
 class ImageSrcAttrEmptyException(WarningException):
     def __init__(self, chapter: Chapter, image: Image):
         self.chapter = chapter
@@ -65,7 +66,7 @@ class ImageSrcAttrEmptyException(WarningException):
 
 
 class WrongResponseException(WarningException):
-    def __init__(self, response: HTTPResponse):
+    def __init__(self, response: Response):
         self.response = response
 
 

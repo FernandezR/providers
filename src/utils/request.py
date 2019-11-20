@@ -1,5 +1,6 @@
-from typing import ClassVar, Union, Tuple, Dict
+from typing import ClassVar, Union, Tuple, Dict, Optional
 from pathlib import Path
+from collections import OrderedDict
 
 from urllib.parse import urlparse
 from requests import Session, Response
@@ -13,14 +14,17 @@ __all__ = ['Request']
 
 
 class Request:
-    _headers: ClassVar[dict] = dict()
-    _session: ClassVar[Session]
+    _headers: dict
+    _session: Optional[Session]
 
     def __init__(self, headers: dict):
-        self._headers.update(headers or {})
+        self._headers = (headers or {})
         default_adapter = HTTPAdapter(max_retries=3)
         self._session = Session()
-        self._session.adapters = [default_adapter]
+        self._session.adapters = OrderedDict({
+            'http://': default_adapter,
+            'https://': default_adapter,
+        })
 
     @property
     def session(self):
@@ -43,16 +47,24 @@ class Request:
 
     @property
     def cookies(self) -> RequestsCookieJar:
+        if not isinstance(self._session, Session):
+            raise RuntimeError('Session error')
         return self._session.cookies
 
     @cookies.setter
     def cookies(self, cookies: dict):
+        if not isinstance(self._session, Session):
+            raise RuntimeError('Session error')
         self._session.cookies = cookiejar_from_dict(cookies)
 
     def cookies_update(self, cookies: dict):
+        if not isinstance(self._session, Session):
+            raise RuntimeError('Session error')
         self._session.cookies.update(cookies)
 
     def request(self, method, url, has_referer: bool = True, **kwargs) -> Response:
+        if not isinstance(self._session, Session):
+            raise RuntimeError('Session error')
         kwargs.setdefault('headers', {})
         kwargs['headers'].update(self._headers)
         if not has_referer and kwargs.get('headers', {}).get('Referer') is not None:

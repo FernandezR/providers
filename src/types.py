@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import NamedTuple, List, Optional
+from typing import NamedTuple, List, Optional, Union
 from urllib.parse import urlparse
 
 __all__ = ['Image', 'Archive', 'Chapter', 'Meta', 'LocalImage']
@@ -11,7 +11,7 @@ class Image(NamedTuple):
     extension: Optional[str]  # preferred extension
     alternative_urls: Optional[List[str]]  # alternative urls
     name_format: str = '{idx:>03}-{name}.{extension}'
-    type: str = None  # image type
+    type: Optional[str] = None  # image type
 
     def __str__(self) -> str:
         name = urlparse(self.url).path
@@ -33,6 +33,18 @@ class LocalImage(NamedTuple):
 class Archive(NamedTuple):  # for some sites
     idx: int  # sequent archive index
     url: str  # archive url
+    name: str  # archive name
+    date: Optional[str]  # chapter publication date
+    name_format: str = 'arc_{idx:>03}-{name}'
+
+    def __str__(self):
+        # chapter human-friendly name
+        return self.name_format.format(
+            idx=self.idx,
+            url=self.url,
+            name=self.name,
+            date=self.date,
+        )
 
 
 class Chapter(NamedTuple):
@@ -43,15 +55,17 @@ class Chapter(NamedTuple):
     ch: str  # sequent chapter index
     url: str  # chapter url
     name: str  # chapter human-friendly name
-    name_format: str = 'ch_{idx_ch:>03}_vol_{idx_vol:>03}-{name}'
+    date: Optional[str] = None  # chapter publication date
+    name_format: str = 'vol_{vol:>03}_ch_{ch:>03}-{name}'
 
     def __str__(self):
         # chapter human-friendly name
         return self.name_format.format(
-            idx_vol=self.vol,
-            idx_ch=self.ch,
+            vol=self.vol,
+            ch=self.ch,
             url=self.url,
             name=self.name,
+            date=self.date,
         )
 
 
@@ -63,5 +77,5 @@ class Meta(NamedTuple):
     title_original: str  # title (Original variant)
     annotation: str
     keywords: List[str]
-    cover: str  # manga cover url
-    rating: int  # manga rating (<int> / 10)
+    cover: Union[str, bytes]  # manga cover url OR bytes
+    rating: float  # manga rating (<int> / 10)
