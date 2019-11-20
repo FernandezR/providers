@@ -16,14 +16,19 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         url = self._url(url)
         if connection is None:
             connection = Request({})
+            connection.headers_update(kwargs.get('headers', {}))
+            connection.cookies_update(self._cookies(kwargs.get('cookies', {})))
         super().__init__(url=url, connection=connection)
         kwargs.pop('connection')
         self._cache['run_params'] = kwargs
         self._requests = connection  # type: Request
 
         if self.AUTO_INIT:
-            self.prepare()
-            self.meta = self.get_meta()
+            try:
+                self.prepare()
+                self.meta = self.get_meta()
+            except Exception as e:
+                self.handle_error(e)
 
     @classmethod
     def new(cls, url: str, *args, **kwargs):
@@ -80,7 +85,6 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
 
     # region special methods
     def _url(self, url: str) -> str:
-        self.html.parse(self.request.get('a').text)
         """ Modify url if need (before init provider) """
         return url
 
@@ -97,7 +101,7 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         return False
 
     def handle_error(self, state: Exception):
-        raise state
+        super().handle_error(state)
 
     def before_image_save(self, image: Image) -> Optional[LocalImage]:
         """ Manipulate image before saving """

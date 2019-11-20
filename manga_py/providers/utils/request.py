@@ -1,12 +1,13 @@
 from collections import OrderedDict
 from pathlib import Path
-from typing import Union, Tuple, Optional
+from typing import Union, Tuple
 from urllib.parse import urlparse
 
 from cloudscraper import CloudScraper
 from requests import Session, Response
 from requests.adapters import HTTPAdapter
-from requests.cookies import cookiejar_from_dict, RequestsCookieJar
+from requests.cookies import RequestsCookieJar
+from requests.utils import default_headers
 
 from ..exceptions import *
 from ..types import *
@@ -16,10 +17,11 @@ __all__ = ['Request', 'url2name']
 
 class Request:
     _headers: dict
-    _session: Optional[Session]
+    _session: Session
 
     def __init__(self, headers: dict):
-        self._headers = (headers or {})
+        headers.update(default_headers())
+        self._headers = headers
         default_adapter = HTTPAdapter(max_retries=3)
         self._session = Session()
         self._session.adapters = OrderedDict({
@@ -41,7 +43,7 @@ class Request:
 
     @headers.setter
     def headers(self, headers: dict):
-        self.headers = headers
+        self._headers = headers
 
     def headers_update(self, headers: dict):
         self.headers.update(headers)
@@ -56,7 +58,9 @@ class Request:
     def cookies(self, cookies: dict):
         if not isinstance(self._session, Session):
             raise RuntimeError('Session error')
-        self._session.cookies = cookiejar_from_dict(cookies)
+        c = self._session.cookies
+        c.update(cookies)
+        self._session.cookies = c
 
     def cookies_update(self, cookies: dict):
         if not isinstance(self._session, Session):
@@ -68,6 +72,7 @@ class Request:
             raise RuntimeError('Session error')
         kwargs.setdefault('headers', {})
         kwargs['headers'].update(self._headers)
+        kwargs.setdefault('User-Agent', self.ua)
         if not has_referer and kwargs.get('headers', {}).get('Referer') is not None:
             del kwargs['headers']['Referer']
         return self._session.request(method=method, url=url, **kwargs)
@@ -99,6 +104,10 @@ class Request:
         return LocalImage(
             image=image,
         )
+
+    @property
+    def ua(self):
+        return self._headers.get('User-Agent', )
 
     def cf_scrape(self, url: str, **kwargs):
         if 'User-Agent' in self.headers:

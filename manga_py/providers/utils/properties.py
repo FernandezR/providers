@@ -123,5 +123,7 @@ class ProviderProperties:
     def images_count(self, count: int):
         self._cache['_images_count'] = count
 
+    def handle_error(self, state: Exception):
+        raise state
     # endregion helpers
 

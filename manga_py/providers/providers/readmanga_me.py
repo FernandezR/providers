@@ -24,7 +24,8 @@ class ReadMangaMe(BaseProvider):
         items = self.html.parse(self.content, '.table tr > td > a')
 
         if len(items) < 1:
-            raise ChaptersNotFoundException()
+            self.handle_error(ChaptersNotFoundException())
+            return []
 
         self.chapters_count = len(items)
         for i in items:
@@ -50,7 +51,8 @@ class ReadMangaMe(BaseProvider):
         images = self._images_re.search(content)
 
         if images is None:
-            raise ImagesNotFoundException(chapter)
+            self.handle_error(ImagesNotFoundException(chapter))
+            return []
 
         urls: List[list] = json.loads(images.group(1).replace("'", '"'))
         _re_servers = self._servers_re.search(content)

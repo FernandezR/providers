@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-from src.meta import version, author
+from manga_py.providers.meta import version, author
 
 release_status = '5 - Production/Stable'
 if ~version.find('beta'):
@@ -10,22 +10,21 @@ if ~version.find('alpha'):
 
 
 setup(
-    name=None,  # TODO
+    name='manga_py.providers',
     version=version,
     license='MIT',
     author=author,
-    package_dir={'': 'src'},
-    packages=find_packages('src'),
+    packages=find_packages(exclude=('providers_tests', '.mypy_cache')),
     keywords="Manga, crawler, Manga crawler providers",
     zip_safe=False,
     include_package_data=True,
+    namespace_packages=['manga_py', ],
     classifiers=[
         'Development Status :: %s' % (release_status,),
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        'Environment :: Console',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
