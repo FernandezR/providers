@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from pathlib import Path
 from typing import Union, Tuple
-from urllib.parse import urlparse
 
 from cloudscraper import CloudScraper
 from requests import Session, Response
@@ -12,7 +11,7 @@ from requests.utils import default_headers
 from ..exceptions import *
 from ..types import *
 
-__all__ = ['Request', 'url2name']
+__all__ = ['Request', ]
 
 
 class Request:
@@ -84,11 +83,6 @@ class Request:
     def post(self, url: str, **kwargs) -> Response:
         return self.request(method='POST', url=url, **kwargs)
 
-    @classmethod
-    def url2name(cls, url: str) -> str:
-        path = urlparse(url).path
-        return path[path.find('/') + 1:]
-
     def download(self, url: str, path: Path, name: Union[str, Path]):
         """ path """
         response = self.get(url)
@@ -116,6 +110,3 @@ class Request:
         self.cookies_update(tokens[0])
         # self.headers.update({'User-Agent': tokens[1]})
         return tokens[1]
-
-
-url2name = Request.url2name

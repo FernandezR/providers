@@ -101,6 +101,7 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         return False
 
     def handle_error(self, state: Exception):
+        """ overload this for catching errors OR run provider with option quiet=True  """
         super().handle_error(state)
 
     def before_image_save(self, image: Image) -> Optional[LocalImage]:

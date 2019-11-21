@@ -1,6 +1,6 @@
 # Crawler providers system
 
-![Build status](https://travis-ci.com/manga-py/providers.svg?branch=master)
+[![Build status](https://travis-ci.com/manga-py/providers.svg?branch=master "Last build status")](https://travis-ci.com/manga-py/providers)
 
 
 ### What is it?

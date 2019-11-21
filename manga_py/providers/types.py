@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import NamedTuple, List, Optional, Union
 
-from .utils.request import url2name
+from .utils.request_utils import url2name
 
 __all__ = ['Image', 'Archive', 'Chapter', 'Meta', 'LocalImage', 'ImageTypes']
 
@@ -21,16 +21,20 @@ class Image(NamedTuple):
     name_format: str = '{idx:>03}-{name}.{extension}'
     extension: Optional[str] = None  # preferred extension
     type: int = 0  # image type @see ImageTypes.NORMAL
+    name: Optional[str] = None  # force file name
 
     def __str__(self) -> str:
         name = url2name(self.url)
-        _re = re.search(r'.+\.(\w{2,4})$', name)
-        ext = _re.group(1) if _re else None
+        _re = re.search(r'(.+)\.(\w{2,4})$', name)
+        if _re is not None:
+            name, ext = _re.groups()
+        else:
+            ext = None
         return self.name_format.format(
             idx=self.idx,
             url=self.url,
             extension=self.extension or (ext or 'png'),
-            name=name,
+            name=self.name or name,
         )
 
 
