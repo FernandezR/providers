@@ -1,5 +1,6 @@
 .idea/
 .mypy_cache/
+htmlcov/
 
 ### Python template
 # Byte-compiled / optimized / DLL files

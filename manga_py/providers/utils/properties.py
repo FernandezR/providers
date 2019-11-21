@@ -1,5 +1,5 @@
 from logging import Logger
-from typing import Union
+from typing import Union, Type
 
 from .html_parser import HtmlParser
 from .request import Request
@@ -14,7 +14,7 @@ class ProviderProperties:
     _meta: Meta
     _log: Logger
     _requests: Request
-    _html: HtmlParser
+    _html: Union[HtmlParser, Type[HtmlParser]] = HtmlParser  # default parser
     _quiet_mode: bool = False
 
     def __init__(self, url: str, connection: Request, **kwargs):
@@ -73,9 +73,7 @@ class ProviderProperties:
         return self._requests
 
     @property
-    def html(self) -> HtmlParser:
-        if not self._html:
-            self._html = HtmlParser()
+    def html(self) -> Union[HtmlParser, Type[HtmlParser]]:
         return self._html
 
     @property

@@ -1,9 +1,12 @@
-from typing import Union, List, Dict, Any
+from typing import Union, List, Dict, Any, Optional
 
 from lxml.html import document_fromstring, HtmlElement
 from tinycss2 import parser, tokenizer
 
 from ..exceptions import BackgroundImageExtractException, InfoException
+
+
+__all__ = ['HtmlParser']
 
 
 class HtmlParser:
@@ -31,30 +34,37 @@ class HtmlParser:
     def background_image(cls, element: HtmlElement) -> str:
         style = element.get('style')
         url = [i for i in parser.parse_component_value_list(style) if isinstance(i, tokenizer.URLToken)]
-        if len(url) < 1:
+        if len(url) < 1 or len(url[-1].value) < 1:
             raise BackgroundImageExtractException(style)
         return url[-1].value
 
     @classmethod
-    def extract_attribute(cls, items: List[HtmlElement], attribute: str = None, strip: bool = True) -> List[str]:
+    def extract_attribute(cls, items: List[HtmlElement], attribute: str, strip: bool = True) -> List[str]:
         return [(i.get(attribute).strip() if strip else i.get(attribute)) for i in items]
 
     @classmethod
+    def __check_min_text_length(cls, text: str, min_length: int = 1):
+        if len(text) < min_length:
+            raise InfoException('Text is too short')
+
+    @classmethod
     def text(cls, element: HtmlElement, strip: bool = True):
-        text = element.text.strip() if strip else element.text
-        if len(text) < 1:
-            raise InfoException('Text has empty')
+        text_or_none = element.text
+        if text_or_none is None:
+            raise InfoException('Element not have text')
+        text = text_or_none.strip() if strip else text_or_none
+        cls.__check_min_text_length(text)
         return text
 
     @classmethod
     def text_full(cls, element: HtmlElement, strip: bool = True):
         text = element.text_content().strip() if strip else element.text_content()
-        if len(text) < 1:
-            raise InfoException('Text has empty')
+        cls.__check_min_text_length(text)
         return text
 
-    def cover(self, element: HtmlElement, selector: str, attr: str = 'src', idx: int = 0) -> str:
-        value = element.cssselect(selector)[idx].get(attr)
-        if not value:
-            raise RuntimeWarning(self)
+    @classmethod
+    def cover(cls, element: HtmlElement, selector: str, attr: str = 'src', idx: int = 0) -> str:
+        _el = cls.select_one(element, selector, idx)
+        value = _el.get(attr)
+        cls.__check_min_text_length(value)
         return value

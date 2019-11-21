@@ -10,6 +10,7 @@ from requests.utils import default_headers
 
 from ..exceptions import *
 from ..types import *
+from .request_utils import *
 
 __all__ = ['Request', ]
 
@@ -86,7 +87,7 @@ class Request:
     def download(self, url: str, path: Path, name: Union[str, Path]):
         """ path """
         response = self.get(url)
-        _path = path.resolve().joinpath(name or self.url2name(response.url))
+        _path = path.resolve().joinpath(name or url2name(response.url))
         with open(str(_path), 'wb') as w:
             if not w.writable():
                 raise CantWriteFileException(str(_path))

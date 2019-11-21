@@ -19,17 +19,18 @@ class Image(NamedTuple):
     url: str  # image url
     alternative_urls: Optional[List[str]]  # alternative urls
     name_format: str = '{idx:>03}-{name}.{extension}'
+    # Explicitly specifying an extension is always preferable.
     extension: Optional[str] = None  # preferred extension
     type: int = 0  # image type @see ImageTypes.NORMAL
     name: Optional[str] = None  # force file name
 
     def __str__(self) -> str:
         name = url2name(self.url)
-        _re = re.search(r'(.+)\.(\w{2,4})$', name)
+        _re = re.search(r'(.+)\.(\w+)$', name)
         if _re is not None:
             name, ext = _re.groups()
         else:
-            ext = None
+            ext = None  # type: ignore
         return self.name_format.format(
             idx=self.idx,
             url=self.url,
