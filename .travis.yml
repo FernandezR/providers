@@ -16,4 +16,4 @@ install:
   - pip install -r requirements.txt
 script:
   - mypy manga_py  # check syntax
-  - coverage run --source=src run_tests.py
+  - coverage run run_tests.py
