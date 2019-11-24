@@ -1,7 +1,7 @@
 import re
 from enum import Enum
 from pathlib import Path
-from typing import NamedTuple, List, Optional, Union
+from typing import NamedTuple, List, Optional, Union, Tuple
 
 from .utils.request_utils import url2name
 
@@ -23,6 +23,7 @@ class Image(NamedTuple):
     extension: Optional[str] = None  # preferred extension
     type: int = 0  # image type @see ImageTypes.NORMAL
     name: Optional[str] = None  # force file name
+    raw: Optional[bytes] = None  # raw bytes image
 
     def __str__(self) -> str:
         name = url2name(self.url)
@@ -41,13 +42,7 @@ class Image(NamedTuple):
 
 class LocalImage(NamedTuple):  # m.b. delete this
     image: Image
-
-    @property
-    def name(self) -> str:
-        return self.image.__str__()
-
-    def path(self, base_path: Path) -> Path:
-        return base_path.resolve().joinpath(self.name)
+    path: Path
 
 
 class Archive(NamedTuple):  # for some sites
@@ -98,4 +93,4 @@ class Meta(NamedTuple):
     annotation: str
     keywords: List[str]
     cover: Union[str, bytes]  # manga cover url OR bytes
-    rating: float  # manga rating (<int> / 10)
+    rating: Tuple[float, float]  # manga rating (<current> / <max>)

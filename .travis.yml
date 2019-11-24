@@ -9,7 +9,7 @@ python:
 cache: pip
 before_install:
   - sudo apt-get -y install python-setuptools libwebp-dev
-  - python -V
+  - echo $TRAVIS_PYTHON_VERSION
   - pwd
 install:
   - pip install -U coverage setuptools pyinstaller mypy
@@ -17,3 +17,13 @@ install:
 script:
   - mypy manga_py  # check syntax
   - coverage run run_tests.py
+deploy:
+  provider: pypi
+  user: __token__
+  password:
+    secure: "QdVp3AqSO32eeBI9DLrU9SO34DKWv1LjtUYYztG49CUXVKl2wlRrm9Iuh7lLSgljvUGwweMJQrwdfuGtCLOXw9sn4zyxBEi4mGn2BNf6ZXsBO5woWBuwU4aKY9jOxqyu393pLkgl4k+IVhOpVNduRRoPgBEUi2EDz5klbAQV3LAQrlA6DcURbvY2cyS0ZlrGyf1HD1PaHRefzaW8wb2l8vXfi/zODYn3SXAEbjaFjQYNE6U/tUbwDseUrYfIYnbznrRLpTcy8RS6F15kd6hHiSRMC2x7rc2Ua/9SlyL/CvPaypjAItvOGKiduZjSrfLThoypSmiWJukNwcx9Sw7TiNtXw3VDPG/XQAiyIJ4FvGI6yDzV/rXhaP+klt1XJdsW1WrWL0oXGfsz5MZg25JWrUGVQR4FHCD9X8JcW1ULilE1vjyd/6Yis/jojHGTU0GJei5evrJtf9xdy8NeKUrGngqKZBMwZaCPBN3TsSQqUbAj6+7wPbEHsqB49t0gVXWm3haroNIMh4Ued2Ea5F9Y6XfwFltTs2ss/TCrpRs5b2eyCA22xd54HwTSNqC+qOjS/om4DKtcZZxLNFm7Tf2Uij/dS0/j/HrUyg+pgLXZI+296AMBXD1O94VeQZYftKWqZCiQ9deqmWuXY4hr1JLHq2x/dg+c+2jmelh0DN6UPqc="
+  on:
+    tags: true
+    branch: master
+    condition: $TRAVIS_PYTHON_VERSION == "3.7"
+  skip_existing: true

@@ -1,9 +1,9 @@
 import re
 from abc import ABCMeta, abstractmethod
-from typing import List, Union, Optional, Iterable
+from typing import List, Union, Optional, Iterable, Type
 
-from .exceptions import *
 from .types import *
+from .utils.html_parser import HtmlParser
 from .utils.properties import ProviderProperties
 from .utils.request import Request
 
@@ -12,15 +12,18 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
     DISABLED = False
     AUTO_INIT = True
 
-    def __init__(self, url: str, connection: Request = None, **kwargs):
+    def __init__(
+            self, url: str, connection: Request = None,
+            html_parser: Union[HtmlParser, Type[HtmlParser]] = None,
+            **kwargs
+    ):
         url = self._url(url)
         if connection is None:
             connection = Request({})
             connection.headers_update(kwargs.get('headers', {}))
             connection.cookies_update(self._cookies(kwargs.get('cookies', {})))
-        super().__init__(url=url, connection=connection)
-        kwargs.pop('connection')
-        self._cache['run_params'] = kwargs
+        super().__init__(url=url, connection=connection, html_parser=(html_parser or HtmlParser))
+        self._cache.setdefault('run_params', kwargs)
         self._requests = connection  # type: Request
 
         if self.AUTO_INIT:
@@ -29,10 +32,8 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
                 self.meta = self.get_meta()
             except Exception as e:
                 self.handle_error(e)
-
-    @classmethod
-    def new(cls, url: str, *args, **kwargs):
-        return cls(url, *args, **kwargs)
+        else:
+            self.info('Please, call prepare() manual')
 
     @staticmethod
     @abstractmethod

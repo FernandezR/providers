@@ -14,15 +14,20 @@ class ProviderProperties:
     _meta: Meta
     _log: Logger
     _requests: Request
-    _html: Union[HtmlParser, Type[HtmlParser]] = HtmlParser  # default parser
+    _html: Union[HtmlParser, Type[HtmlParser]]  # default parser
     _quiet_mode: bool = False
 
-    def __init__(self, url: str, connection: Request, **kwargs):
+    def __init__(
+            self, url: str, connection: Request,
+            html_parser: Union[HtmlParser, Type[HtmlParser]],
+            **kwargs
+    ):
         if 'log' not in kwargs:
             kwargs['log'] = Logger(self.__class__.__name__)
         self._cache = {'url': url}  # type: dict
         self._log = kwargs['log']  # type: Logger
         self._requests = connection  # type: Request
+        self._html = html_parser
         self._quiet_mode = kwargs.get('quiet', False)
 
     @property

@@ -3,11 +3,12 @@ import re
 from typing import List, Union, Iterable
 
 from ..base_provider import BaseProvider
-from ..exceptions import ImagesNotFoundException, ChaptersNotFoundException
+from ..exceptions import ImagesNotFoundException, ChaptersNotFoundException, ProviderError
 from ..types import *
 
 
 class ReadMangaMe(BaseProvider):
+    _url_re = re.compile(r'(.*//[^/]+/[^/])')
     _chapters_re = re.compile(r'/[^/]+/(?:vol)?([^/]+/[^/]+)(?:/|\?ma?t)?')
     _images_re = re.compile(r'rm_h\.init.+?(\[\[.+\]\])')
     _servers_re = re.compile(r'servers\s?=\s?(\[.+\])')
@@ -15,6 +16,12 @@ class ReadMangaMe(BaseProvider):
     @staticmethod
     def supported_urls() -> List[str]:
         return [r'//readmanga\.me/\w']
+
+    def _url(self, url: str) -> str:
+        match = self._url_re.search(url)
+        if match is None:
+            raise ProviderError()
+        return match.group(1)
 
     def prepare(self):
         self.init_content()
@@ -86,5 +93,5 @@ class ReadMangaMe(BaseProvider):
             annotation=self.html.text_full(self.html.select_one(dom, '.manga-description', 0)),
             keywords=[],
             cover=self.html.cover(dom, '.picture-fotorama > img'),
-            rating=float(score.get('value')) * 2.0,  # because x/5
+            rating=(float(score.get('value')), 5.0),
         )
