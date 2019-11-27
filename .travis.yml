@@ -25,8 +25,6 @@ jobs:
         provider: releases
         api_key: $GH_TOKEN
         file: "manga_py_providers_${TRAVIS_TAG}.zip"
-        on:
-          tags: true
     - stage: release
       python: "3.7"
       script: skip
@@ -34,8 +32,6 @@ jobs:
         provider: pypi
         user: __token__
         password: $PYPI_KEY
-        on:
-          tags: true
         skip_existing: true
 cache: pip
 before_install:
@@ -50,6 +46,6 @@ script:
 stages:
   - name: test
   - name: artefact
-    if: (NOT type = pull_request) AND branch = master
+    if: (NOT type = pull_request) AND branch = master and tag IS present
   - name: release
-    if: (NOT type = pull_request) AND branch = master
+    if: (NOT type = pull_request) AND branch = master and tag IS present
