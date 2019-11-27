@@ -18,7 +18,7 @@ build:
         override:
           - command: mypy manga_py
           -
-            command: 'coverage run --omit=manga_py/providers/*.py --source=manga_py run_tests.py'
+            command: coverage run --source=manga_py run_tests.py
             coverage:
               file: '.coverage'
               format: 'py-cc'
