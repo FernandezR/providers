@@ -9,7 +9,7 @@ from requests.cookies import RequestsCookieJar
 from requests.utils import default_headers
 
 from ..exceptions import CantWriteFileException
-from .request_utils import url2name
+from . import url2name
 from ..types import Image, LocalImage
 
 __all__ = ['Request', ]

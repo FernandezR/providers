@@ -1,10 +1,10 @@
 from queue import Queue
 from threading import Thread
 
-__all__ = ['Wrapper']
+__all__ = ['QueueWrapper']
 
 
-class Wrapper:
+class QueueWrapper:
     _queue: Queue
 
     class Daemon(Thread):

@@ -1,11 +1,11 @@
 from typing import Callable, Iterable
 
-from .queue_wrapper import Wrapper
+from .queue_wrapper import QueueWrapper
 
 __all__ = ['Downloader']
 
 
-class Downloader(Wrapper):
+class Downloader(QueueWrapper):
     def download(self, callback: Callable, urls: Iterable, *args, **kwargs):
         """
         callback: Callable

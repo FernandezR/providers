@@ -1,10 +1,9 @@
-from typing import Union, List, Dict, Any, Optional
+from typing import Union, List, Dict, Any
 
 from lxml.html import document_fromstring, HtmlElement
 from tinycss2 import parser, tokenizer
 
 from ..exceptions import BackgroundImageExtractException, InfoException
-
 
 __all__ = ['HtmlParser']
 

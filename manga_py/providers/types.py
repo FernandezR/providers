@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import NamedTuple, List, Optional, Union, Tuple
 
-from .utils.request_utils import url2name
+from .utils import url2name
 
 __all__ = ['Image', 'Archive', 'Chapter', 'Meta', 'LocalImage', 'ImageTypes']
 

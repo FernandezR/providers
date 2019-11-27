@@ -1,6 +1,6 @@
 import unittest
 
-from manga_py.providers.utils.request_utils import url2name
+from manga_py.providers.utils import url2name
 from ._test_variables import TestVariables
 
 

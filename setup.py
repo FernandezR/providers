@@ -1,19 +1,19 @@
 from setuptools import find_packages, setup
 
-from manga_py.providers.meta import version, author
+from manga_py.providers.meta import __version__, __author__
 
 release_status = '5 - Production/Stable'
-if ~version.find('beta'):
+if ~__version__.find('beta'):
     release_status = '4 - Beta'
-if ~version.find('alpha'):
+if ~__version__.find('alpha'):
     release_status = '3 - Alpha'
 
 
 setup(
     name='manga_py.providers',
-    version=version,
+    version=__version__,
     license='MIT',
-    author=author,
+    author=__author__,
     packages=find_packages(exclude=('providers_tests', '.mypy_cache')),
     keywords="Manga, crawler, Manga crawler providers",
     zip_safe=False,
