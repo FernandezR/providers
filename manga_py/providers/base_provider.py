@@ -65,7 +65,11 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         self.info_or_raise('Default prepare method')
 
     @abstractmethod
-    def get_chapters(self) -> Iterable[Chapter]:
+    def get_chapters(self, *args) -> Iterable[Chapter]:
+        """
+        Please, use args as slice:
+        *args => (0, 1, 2) => list[0:1:2]
+        """
         raise NotImplementedError()
 
     def get_chapters_count(self) -> int:
@@ -73,7 +77,11 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         return self.chapters_count
 
     @abstractmethod
-    def get_chapter_files(self, chapter: Chapter) -> Iterable[Union[Image, Archive]]:
+    def get_chapter_files(self, chapter: Chapter, *args) -> Iterable[Union[Image, Archive]]:
+        """
+        Please, use args as slice:
+        *args => (0, 1, 2) => list[0:1:2]
+        """
         raise NotImplementedError()
 
     def get_chapter_files_count(self, chapter: Chapter) -> int:

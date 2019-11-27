@@ -26,13 +26,17 @@ class ReadMangaMe(BaseProvider):
     def prepare(self):
         self.init_content()
 
-    def get_chapters(self) -> Iterable[Chapter]:
+    def get_chapters(self, *args) -> Iterable[Chapter]:
         self.images_count = -1  # force reset it
         items = self.html.parse(self.content, '.table tr > td > a')
 
         if len(items) < 1:
             self.handle_error(ChaptersNotFoundException())
             return []
+
+        if len(args):
+            _slice = slice(args)
+            items = items[_slice.start:_slice.stop:_slice.step]
 
         self.chapters_count = len(items)
         for i in items:
@@ -53,7 +57,7 @@ class ReadMangaMe(BaseProvider):
                 # name_format=''
             )
 
-    def get_chapter_files(self, chapter: Chapter) -> Iterable[Union[Image, Archive]]:
+    def get_chapter_files(self, chapter: Chapter, *args) -> Iterable[Union[Image, Archive]]:
         content = self.request.get(chapter.url).text
         images = self._images_re.search(content)
 
@@ -63,6 +67,10 @@ class ReadMangaMe(BaseProvider):
 
         urls: List[list] = json.loads(images.group(1).replace("'", '"'))
         _re_servers = self._servers_re.search(content)
+
+        if len(args):
+            _slice = slice(args)
+            urls = urls[_slice.start:_slice.stop:_slice.step]
 
         servers: List[str] = []
         if _re_servers is not None:

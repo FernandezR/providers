@@ -2,13 +2,43 @@ language: python
 dist: xenial
 #addons:
 #  artifacts: true
-python:
-  - "3.6"
-  - "3.7"
-  - "3.8"
+addons:
+  apt:
+    packages:
+      - python-setuptools
+      - libwebp-dev
+jobs:
+  include:
+    - stage: test
+      python: "3.6"
+    - stage: test
+      python: "3.7"
+    - stage: test
+      python: "3.8"
+    - stage: artefact
+      python: "3.7"
+      script:
+        - find . -name *.pyc 2>/dev/null | xargs rm -f
+        - find . -name __pycache__ 2>/dev/null | xargs rm -rf
+        - zip -r -q "manga_py_providers_${TRAVIS_TAG}.zip manga_py"
+      deploy:
+        provider: releases
+        api_key: $GH_TOKEN
+        file: "manga_py_providers_${TRAVIS_TAG}.zip"
+        on:
+          tags: true
+    - stage: release
+      python: "3.7"
+      script: skip
+      deploy:
+        provider: pypi
+        user: __token__
+        password: $PYPI_KEY
+        on:
+          tags: true
+        skip_existing: true
 cache: pip
 before_install:
-  - sudo apt-get -y install python-setuptools libwebp-dev
   - echo $TRAVIS_PYTHON_VERSION
   - pwd
 install:
@@ -17,12 +47,9 @@ install:
 script:
   - mypy manga_py  # check syntax
   - coverage run run_tests.py
-deploy:
-  provider: pypi
-  user: __token__
-  password: $PYPI_KEY
-  on:
-    tags: true
-    branch: master
-    condition: $TRAVIS_PYTHON_VERSION == "3.7"
-  skip_existing: true
+stages:
+  - test
+  - artefact
+    if: (NOT type = pull_request) AND branch = master
+  - name: release
+    if: (NOT type = pull_request) AND branch = master
