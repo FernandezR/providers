@@ -14,9 +14,8 @@ build:
           - sudo apt update python-setuptools libwebp-dev
           - pip3 install setuptools mypy coverage
           - pip3 install -r requirements.txt
-        commands:
-          - command: mypy
         override:
+          - command: mypy
           -
             command: 'coverage run --omit=manga_py/providers/*.py --source=manga_py run_tests.py'
             coverage:

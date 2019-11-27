@@ -48,8 +48,8 @@ script:
   - mypy manga_py  # check syntax
   - coverage run run_tests.py
 stages:
-  - test
-  - artefact
+  - name: test
+  - name: artefact
     if: (NOT type = pull_request) AND branch = master
   - name: release
     if: (NOT type = pull_request) AND branch = master
