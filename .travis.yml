@@ -20,7 +20,7 @@ jobs:
       script:
         - find . -name *.pyc 2>/dev/null | xargs rm -f
         - find . -name __pycache__ 2>/dev/null | xargs rm -rf
-        - zip -r -q "manga_py_providers_${TRAVIS_TAG}.zip manga_py"
+        - zip -r -q "manga_py_providers_${TRAVIS_TAG}.zip" manga_py
       deploy:
         provider: releases
         api_key: $GH_TOKEN
