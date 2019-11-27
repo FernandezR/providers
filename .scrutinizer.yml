@@ -12,7 +12,7 @@ build:
       tests:
         before:
           - sudo apt update
-          - sudo apt install python-setuptools libwebp-dev
+          - sudo apt install -y python-setuptools libwebp-dev
           - pip3 install setuptools mypy coverage
           - pip3 install -r requirements.txt
         override:
