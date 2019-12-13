@@ -5,7 +5,7 @@ __all__ = ['QueueWrapper']
 
 
 class QueueWrapper:
-    _queue: Queue
+    __slots__ = ('_queue',)
 
     class Daemon(Thread):
         def __init__(self, queue):

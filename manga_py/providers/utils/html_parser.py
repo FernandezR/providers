@@ -1,4 +1,4 @@
-from typing import Union, List, Dict, Any
+from typing import Union, List, Iterable
 
 from lxml.html import document_fromstring, HtmlElement
 from tinycss2 import parser, tokenizer
@@ -10,7 +10,6 @@ __all__ = ['HtmlParser']
 
 class HtmlParser:
     __slots__ = ()
-    __dict__: Dict[str, Any] = dict()
     DEFAULT_TRANSLATOR: str = 'html'
 
     @classmethod

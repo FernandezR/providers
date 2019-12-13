@@ -14,7 +14,7 @@ setup(
     version=__version__,
     license='MIT',
     author=__author__,
-    packages=find_packages(exclude=('providers_tests', '.mypy_cache')),
+    packages=find_packages(exclude=('tests', '.mypy_cache')),
     keywords="Manga, crawler, Manga crawler providers",
     zip_safe=False,
     include_package_data=True,
@@ -42,5 +42,6 @@ setup(
         'js2py',
         'tinycss2',
         'peewee',
-    ]
+    ],
+    python_requires='>=3.6'
 )
