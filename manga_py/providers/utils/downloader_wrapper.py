@@ -19,6 +19,7 @@ class Downloader(QueueWrapper):
         dl.download(download_fn, 'http://site/path/to/image.png')
         """
         for idx, url in enumerate(urls):
-            kwargs.update({'_idx': idx})
-            self.queue.put((callback, url, args, kwargs))
+            temp_kwargs = kwargs.copy()
+            temp_kwargs.update(_idx=idx)
+            self.queue.put((callback, url, args, temp_kwargs))
         self.queue.join()
