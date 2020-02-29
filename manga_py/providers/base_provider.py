@@ -29,7 +29,6 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         if self.AUTO_INIT:
             try:
                 self.prepare()
-                self.meta = self.get_meta()
             except Exception as e:
                 self.handle_error(e)
         else:
@@ -62,6 +61,7 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
     @abstractmethod
     def prepare(self):
         self.init_content()
+        self.meta = self.get_meta()
         self.info_or_raise('Default prepare method')
 
     @abstractmethod

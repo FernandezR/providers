@@ -3,7 +3,7 @@ from typing import Union, Type
 
 from .html_parser import HtmlParser
 from .request import Request
-from ..exceptions import InfoException, WarningException
+from ..exceptions import InfoException, WarningException, ErrorException
 from ..types import *
 
 __all__ = ['ProviderProperties']
@@ -83,7 +83,7 @@ class ProviderProperties:
 
     @property
     def quiet(self) -> bool:
-        return self._quiet_mode
+        return not self._quiet_mode
 
     # region helpers
     def init_content(self):
@@ -100,15 +100,21 @@ class ProviderProperties:
 
     def info_or_raise(self, message, *args, **kwargs):
         if self.quiet:
-            self.info_or_raise(message, *args, **kwargs)
-        else:
             raise InfoException(message, *args, **kwargs)
+        else:
+            self.info(message, *args, **kwargs)
 
     def warning_or_raise(self, message, *args, **kwargs):
         if self.quiet:
-            self.warning(message, *args, **kwargs)
-        else:
             raise WarningException(message, *args, **kwargs)
+        else:
+            self.warning(message, *args, **kwargs)
+
+    def error_or_raise(self, message, *args, **kwargs):
+        if self.quiet:
+            raise ErrorException(message, *args, **kwargs)
+        else:
+            self.error(message, *args, **kwargs)
 
     @property
     def chapters_count(self) -> int:

@@ -13,6 +13,7 @@ __all__ = [
     'BackgroundImageExtractException',
     'CantWriteFileException',
     'WarningException',
+    'ErrorException',
     'ProviderNotFoundError',
 ]
 
