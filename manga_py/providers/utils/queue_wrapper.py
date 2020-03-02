@@ -5,7 +5,7 @@ __all__ = ['QueueWrapper']
 
 
 class QueueWrapper:
-    __slots__ = ('_queue',)
+    __slots__ = ('_queue', 'max_threads')
 
     class Daemon(Thread):
         def __init__(self, queue):
@@ -23,11 +23,11 @@ class QueueWrapper:
 
         try:
             from multiprocessing import cpu_count
-            max_threads = cpu_count()
+            self.max_threads = cpu_count()
         except ImportError:
-            max_threads = 2
+            self.max_threads = 2
 
-        for i in range(max_threads):
+        for i in range(self.max_threads):
             t = self.Daemon(self._queue)
             t.setDaemon(True)
             t.start()

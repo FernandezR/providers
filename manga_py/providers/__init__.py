@@ -1,3 +1,6 @@
-from .providers import *
+try:
+    from .providers import *
 
-__all__ = ['providers', 'get_providers']
+    __all__ = ['providers', 'get_providers']
+except ImportError:
+    __all__ = []

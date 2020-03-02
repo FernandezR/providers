@@ -6,7 +6,7 @@ __all__ = ['Downloader']
 
 
 class Downloader(QueueWrapper):
-    __slots__ = ()
+
     def download(self, callback: Callable, urls: Iterable, *args, **kwargs):
         """
         callback: Callable

@@ -24,6 +24,7 @@ class Image(NamedTuple):
     type: int = 0  # image type @see ImageTypes.NORMAL
     name: Optional[str] = None  # force file name
     raw: Optional[bytes] = None  # raw bytes image
+    follow_url: Optional[str] = None  # if not None, download with follow url
 
     def __str__(self) -> str:
         name = url2name(self.url)
@@ -51,6 +52,7 @@ class Archive(NamedTuple):  # for some sites
     name: str  # archive name
     date: Optional[str]  # chapter publication date
     name_format: str = 'arc_{idx:>03}-{name}'
+    follow_url: Optional[str] = None  # if not None, download with follow url
 
     def __str__(self):
         # chapter human-friendly name
@@ -72,6 +74,7 @@ class Chapter(NamedTuple):
     name: str  # chapter human-friendly name
     date: Optional[str] = None  # chapter publication date
     name_format: str = 'vol_{vol:>03}_ch_{ch:>03}-{name}'
+    follow_url: Optional[str] = None  # if not None, download with follow url
 
     def __str__(self):
         # chapter human-friendly name

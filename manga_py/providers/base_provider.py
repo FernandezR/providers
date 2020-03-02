@@ -90,6 +90,10 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
     @abstractmethod
     def get_meta(self) -> Meta:
         raise NotImplementedError()
+
+    @abstractmethod
+    def decrypt_image(self, image: Image) -> Image:
+        raise NotImplementedError()
     # endregion abstract
 
     # region special methods
