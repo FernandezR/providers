@@ -12,14 +12,14 @@ Manga crawler plugin system (see [manga-py/manga_py](https://github.com/manga-py
 ```python
 from sys import stderr
 
-from crawler_providers import get_providers
+from crawler_providers import matched_providers
 from crawler_providers.exceptions import *
 from crawler_providers.types import *
 
 url = 'http://best-site/manga/awesome'
 
 try:
-    providers = get_providers(url)  # type: list
+    providers = matched_providers(url)  # type: list
 except ProviderNotFoundError as e:
     print('Provider not found', file=stderr)
     exit(1)

@@ -7,9 +7,9 @@ from requests import Session, Response
 from requests.adapters import HTTPAdapter
 from requests.cookies import RequestsCookieJar
 from requests.utils import default_headers
+from urllib.parse import urlparse
 
 from ..exceptions import CantWriteFileException
-from . import url2name
 from ..types import Image, LocalImage
 
 __all__ = ['Request', ]
@@ -87,7 +87,10 @@ class Request:
     def download(self, url: str, path: Path, name: Union[str, Path] = None):
         """ path is directory """
         response = self.get(url)
-        _path = path.resolve().joinpath(name or url2name(response.url))
+        _path = path.resolve().joinpath(name or urlparse(response.url).path)
+
+        _path.parts
+
         with open(str(_path), 'wb') as w:
             if not w.writable():
                 raise CantWriteFileException(str(_path))

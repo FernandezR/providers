@@ -2,8 +2,7 @@ import re
 from enum import Enum
 from pathlib import Path
 from typing import NamedTuple, List, Optional, Union, Tuple
-
-from .utils import url2name
+from urllib.parse import urlparse
 
 __all__ = ['Image', 'Archive', 'Chapter', 'Meta', 'LocalImage', 'ImageTypes']
 
@@ -26,13 +25,19 @@ class Image(NamedTuple):
     raw: Optional[bytes] = None  # raw bytes image
     follow_url: Optional[str] = None  # if not None, download with follow url
 
-    def __str__(self) -> str:
-        name = url2name(self.url)
+    def __get_name_and_ext(self) -> Tuple[str, Optional[str]]:
+        name = urlparse(self.url).path
         _re = re.search(r'(.+)\.(\w+)$', name)
         if _re is not None:
             name, ext = _re.groups()
         else:
             ext = None  # type: ignore
+        return name, ext
+
+    def __str__(self) -> str:
+        name, ext = None, None
+        if self.extension is None or self.name is None:
+            name, ext = self.__get_name_and_ext()
         return self.name_format.format(
             idx=self.idx,
             url=self.url,

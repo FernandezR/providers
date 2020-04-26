@@ -47,7 +47,7 @@ class BaseProvider(ProviderProperties, metaclass=ABCMeta):
         raise NotImplementedError()
 
     @classmethod
-    def is_supported(cls, url) -> bool:
+    def is_supported(cls, url: str) -> bool:
         for _url in cls.supported_urls():
             if not cls.DISABLED and re.search(_url, url):
                 return True

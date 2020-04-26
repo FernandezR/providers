@@ -1,2 +1,4 @@
-__version__ = '2.0-alpha.1'
-__author__ = 'Sergey Zharkov and Contributors'
+version = '2.0-alpha.1'
+author = 'Sergey Zharkov and Contributors'
+
+__all__ = ['version', 'author']
