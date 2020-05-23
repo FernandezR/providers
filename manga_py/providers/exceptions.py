@@ -3,15 +3,12 @@ from requests import Response
 from .types import *
 
 __all__ = [
-    'InfoException',
     'SiteDownException',
     'ChaptersNotFoundException',
     'ImagesNotFoundException',
     'CoverNotFoundException',
     'ProviderError',
     'WrongResponseException',
-    'BackgroundImageExtractException',
-    'CantWriteFileException',
     'WarningException',
     'ErrorException',
     'ProviderNotFoundError',
@@ -26,11 +23,6 @@ class FatalException(Exception):
 
 class ErrorException(Exception):
     """ Error exceptions. Can't be continue """
-    pass
-
-
-class InfoException(UserWarning):
-    """ Log only """
     pass
 
 
@@ -63,16 +55,6 @@ class CoverNotFoundException(InfoException):
 class WrongResponseException(WarningException):
     def __init__(self, response: Response):
         self.response = response
-
-
-class BackgroundImageExtractException(WarningException):
-    def __init__(self, style: str):
-        self.style = style
-
-
-class CantWriteFileException(WarningException):
-    def __init__(self, path: str):
-        self.path = path
 
 
 # Provider internal errors

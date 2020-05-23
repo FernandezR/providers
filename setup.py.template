@@ -21,6 +21,7 @@ setup(
     keywords="Manga, crawler, Manga crawler providers",
     zip_safe=False,
     include_package_data=True,
+    url="https://github.com/manga-py/providers",
     namespace_packages=['manga_py', ],
     classifiers=[
         'Development Status :: %s' % (release_status,),

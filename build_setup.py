@@ -7,7 +7,7 @@ with open('setup.py.template', 'r') as r:
     content = r.read()
 
     for key in meta.__all__:
-        content = content.replace('__%s__' % key, getattr(meta, key))
+        content = content.replace(f'__{key}__', getattr(meta, key))
 
     with open('setup.py', 'w') as w:
         w.write(content)

@@ -1,6 +1,7 @@
 .idea/
 .mypy_cache/
 htmlcov/
+/manga_py/utils/
 
 ### Python template
 # Byte-compiled / optimized / DLL files

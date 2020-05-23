@@ -6,4 +6,4 @@ requests
 packaging
 js2py
 tinycss2
-peewee
+manga-py.utils
